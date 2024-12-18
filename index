@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualization Analysis of Global Higher Education Based on QS Rankings</title>
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.3.0/dist/echarts.min.js"></script>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- 使用最新稳定版本的 CDN 链接 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.24.1/plotly.min.js"></script>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -74,9 +75,125 @@
         </div>
     </div>
 
-    <!-- 之前的 JavaScript 代码保持不变 -->
     <script>
-        // ... (之前的代码保持完全相同)
+        // University Count and Average Score Chart (ECharts)
+        const dualBarChart = echarts.init(document.getElementById('dualBarChart'));
+
+        const countries = ['United States', 'China', 'South Korea', 'New Zealand', 'Chile'];
+        const universityCounts = [22, 15, 5, 2, 2]; // University Count
+        const avgScores = [80, 90, 70, 65, 60]; // Average Score
+
+        const barOption = {
+            title: { 
+                text: 'University Count and Average Score',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: { type: 'shadow' }
+            },
+            legend: { 
+                data: ['University Count', 'Average Score'],
+                top: 30
+            },
+            xAxis: { 
+                type: 'category', 
+                data: countries,
+                axisLabel: { 
+                    rotate: 45,
+                    interval: 0 
+                }
+            },
+            yAxis: [
+                { 
+                    type: 'value', 
+                    name: 'University Count', 
+                    position: 'left',
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                },
+                { 
+                    type: 'value', 
+                    name: 'Average Score', 
+                    position: 'right',
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                }
+            ],
+            series: [
+                { 
+                    name: 'University Count', 
+                    type: 'bar', 
+                    data: universityCounts,
+                    itemStyle: {
+                        color: '#3498db'
+                    }
+                },
+                { 
+                    name: 'Average Score', 
+                    type: 'bar', 
+                    yAxisIndex: 1, 
+                    data: avgScores,
+                    itemStyle: {
+                        color: '#2ecc71'
+                    }
+                }
+            ]
+        };
+
+        dualBarChart.setOption(barOption);
+        window.addEventListener('resize', () => dualBarChart.resize());
+
+        // Top 10 Universities Radar Chart (Plotly)
+        const universities = [
+            'MIT', 'Imperial College', 'University of Oxford', 'Harvard University',
+            'University of Cambridge', 'Stanford University', 'ETH Zurich',
+            'National University of Singapore', 'UCL', 'California Institute of Tech'
+        ];
+
+        const metrics = ['Academic Reputation', 'Employer Reputation', 'Faculty/Student Ratio', 
+                         'Citations per Faculty', 'International Faculty', 'International Students', 'Sustainability'];
+
+        const data = [
+            [100, 100, 100, 100, 99.3, 86.8, 99],
+            [98.5, 99.5, 98.2, 93.9, 100, 99.6, 90],
+            [100, 100, 94.8, 84.8, 97.3, 97.7, 85.1],
+            [100, 100, 96.3, 100, 74.1, 69, 84.4],
+            [100, 100, 100, 84.6, 100, 94.8, 84.2],
+            [100, 100, 100, 100, 100, 60.8, 82.1],
+            [98.8, 87.2, 65.9, 97.9, 100, 98, 98.8],
+            [99.5, 91.1, 68.8, 93.1, 96.8, 88.9, 97.7],
+            [99.5, 98.3, 95.9, 72.2, 99, 100, 74.8],
+            [96.5, 95.3, 100, 100, 100, 79.8, 62.5]
+        ];
+
+        // Prepare radar chart data
+        const radarData = universities.map((uni, index) => {
+            return {
+                type: 'scatterpolar',
+                r: [...data[index], data[index][0]], // Close the shape
+                theta: [...metrics, metrics[0]], // Close the shape
+                fill: 'toself',
+                name: uni
+            };
+        });
+
+        // Radar chart layout
+        const layout = {
+            polar: {
+                radialaxis: {
+                    visible: true,
+                    range: [0, 100]
+                }
+            },
+            showlegend: true,
+            title: 'Top 10 Universities Performance Across Metrics'
+        };
+
+        // Plot the radar chart
+        Plotly.newPlot('radar-chart', radarData, layout);
     </script>
 </body>
 </html>
